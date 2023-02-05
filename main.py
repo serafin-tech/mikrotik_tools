@@ -98,9 +98,13 @@ def main():
     if params.option == 'unifi_43':
         logging.debug(pprint.pformat(params))
         logging.info("encoded value: %s", encode_unifi_43(params.address))
+
+        # /ip dhcp-server option add code=43 name=unifi-controller-addr value=0x0104C0A80001
     elif params.option == 'classless_routes':
         logging.debug(pprint.pformat(params))
         logging.info("encoded value: %s", encode_classless_routes(params.route_spec))
+
+        # /ip dhcp-server option add code=121 name=classless-static-route-option value=0x00C0A8000118C0A800C0A80001
 
 
 if __name__ == '__main__':
