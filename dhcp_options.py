@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-
+# -*- coding: utf-8 -*-
+# pylint: disable=missing-function-docstring
+"""
+generate MikroTik DHCP options payloads:
+- unifi controller address (option 43)
+- classless static routes (option 121)
+"""
 import argparse
 import ipaddress
 import logging
@@ -44,12 +50,14 @@ def encode_classless_routes(payload: List[str]) -> str:
             else:
                 network_addr_hex_length = 0
 
-            network_addr_hex = f'{network_addr.network_address:X}'[:network_addr_hex_length]
+            network_addr_hex = f'{network_addr.network_address:X}'[
+                :network_addr_hex_length]
 
             logging.debug("network_address: %s, prefixlen: %s, network_addr_hex: %s",
                           network_addr.network_address, network_addr.prefixlen, network_addr_hex)
 
-            ret.append(f'{network_addr.prefixlen:X}{network_addr_hex}{gateway_addr:X}')
+            ret.append(
+                f'{network_addr.prefixlen:X}{network_addr_hex}{gateway_addr:X}')
 
         except ValueError:
             logging.info('invalid route spec: %s', route_spec)
@@ -59,7 +67,8 @@ def encode_classless_routes(payload: List[str]) -> str:
 
 
 def args_parser():
-    parser = argparse.ArgumentParser(description='Script to generate MikroTik DHCP options')
+    parser = argparse.ArgumentParser(
+        description='Script to generate MikroTik DHCP options')
 
     parser.add_argument('-v', '--verbose',
                         action='store_true',
@@ -68,11 +77,13 @@ def args_parser():
 
     subparsers = parser.add_subparsers(dest='option')
 
-    unifi_43 = subparsers.add_parser('unifi_43', help='Option 43 for Unifi Controller address')
+    unifi_43 = subparsers.add_parser(
+        'unifi_43', help='Option 43 for Unifi Controller address')
     unifi_43.add_argument('address',
                           help='address to encode')
 
-    classless_routes = subparsers.add_parser('classless_routes', help='Option 121 for classless static routes')
+    classless_routes = subparsers.add_parser(
+        'classless_routes', help='Option 121 for classless static routes')
     classless_routes.add_argument('route_spec',
                                   nargs='+',
                                   help='route specification to encode in format "a.b.c.d/e 1.2.3.4", '
@@ -102,7 +113,8 @@ def main():
         # /ip dhcp-server option add code=43 name=unifi-controller-addr value=0x0104C0A80001
     elif params.option == 'classless_routes':
         logging.debug(pprint.pformat(params))
-        logging.info("encoded value: %s", encode_classless_routes(params.route_spec))
+        logging.info("encoded value: %s",
+                     encode_classless_routes(params.route_spec))
 
         # /ip dhcp-server option add code=121 name=classless-static-route-option value=0x00C0A8000118C0A800C0A80001
 
